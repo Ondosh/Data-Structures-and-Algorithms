@@ -2,6 +2,7 @@
 #include "../templates/templates.hpp"
 #include "../templates/templates.cpp"
 #include <algorithm>
+#include <iostream>
 
 // ============================================================================
 // Тесты для gen_random_array
@@ -86,7 +87,7 @@ TEST(SequentialSearchTest, NotFound) {
 }
 
 TEST(SequentialSearchTest, EmptyArray) {
-    EXPECT_EQ(sequential_search(nullptr, 0, 42), -1);
+    EXPECT_EQ(sequential_search(static_cast<int*>(nullptr), 0, 42), -1LL);
 }
 
 TEST(SequentialSearchTest, SingleElementFound) {
@@ -131,7 +132,7 @@ TEST(BinarySearchTest, NotFound) {
 }
 
 TEST(BinarySearchTest, EmptyArray) {
-    EXPECT_EQ(binary_search(nullptr, 0, 42), -1);
+    EXPECT_EQ(binary_search(static_cast<int*>(nullptr), 0, 42), -1LL);
 }
 
 TEST(BinarySearchTest, SingleElementFound) {
@@ -178,7 +179,7 @@ TEST(InterpolationSearchTest, NotFound) {
 }
 
 TEST(InterpolationSearchTest, EmptyArray) {
-    EXPECT_EQ(interpolation_search(nullptr, 0, 42), -1);
+    EXPECT_EQ(interpolation_search(static_cast<int*>(nullptr), 0, 42), -1LL);
 }
 
 TEST(InterpolationSearchTest, SingleElementFound) {
