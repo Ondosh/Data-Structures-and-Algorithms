@@ -10,14 +10,45 @@
 // Перебирает все элементы подряд слева направо.
 // Работает на любом массиве — не требует сортировки.
 // Сложность: O(n) — в худшем случае просматриваем весь массив.
-int sequential_search(int* arr, size_t n, int s);
+template<typename T>
+long long sequential_search(T* arr, size_t n, T s) {
+    for (long long i = 0; i < n; i++) {
+        if (s == arr[i])
+        {
+            return i;  // Нашли — возвращаем индекс
+        }
+    }
+    return -1;  // Элемент не найден
+}
 
 // Бинарный поиск
 // Каждый шаг делит оставшийся диапазон пополам и отбрасывает
 // ту половину, в которой элемент заведомо не может находиться.
 // Требует предварительно отсортированного массива.
 // Сложность: O(log n) — при n=1 000 000 не более ~20 шагов.
-int binary_search(int* arr, size_t n, int s);
+template<typename T>
+long long binary_search(T* arr, size_t n, T s) {
+    int left = 0;
+    int right = n - 1;  // Границы текущего диапазона поиска
+
+    while (left <= right) {
+        // Вычисляем середину через left + (right-left)/2, а не (left+right)/2,
+        // чтобы избежать переполнения при больших значениях left и right.
+        int mid = left + (right - left) / 2;
+
+        if (arr[mid] == s) {
+            return mid;          // Попали точно — элемент найден
+        }
+        else if (arr[mid] < s) {
+            left = mid + 1;      // Искомое правее — отсекаем левую половину
+        }
+        else {
+            right = mid - 1;     // Искомое левее — отсекаем правую половину
+        }
+    }
+
+    return -1;  // Диапазон сжался до нуля — элемент не найден
+}
 
 // Интерполяционный поиск
 // Возвращает индекс найденного элемента, или -1 если не найден
@@ -25,7 +56,37 @@ int binary_search(int* arr, size_t n, int s);
 // Лучше всего работает при отсортированном массиве, 
 // так как поиск работает по принципу поиска слова в словаре.
 // (поиск начинается с той части, в которой наиболее вероятно появление числа)
-int interpolation_search(int* arr, size_t n, int target);
+// BigO (log log n)
+template<typename T>
+long long interpolation_search(T* arr, size_t n, T target) {
+    int left = 0;
+    int right = static_cast<int>(n) - 1;
+
+    while (left <= right
+           && target >= arr[left]
+           && target <= arr[right])
+    {
+        // Защита от деления на ноль (все элементы одинаковы)
+        if (arr[left] == arr[right]) {
+            return (arr[left] == target) ? left : -1;
+        }
+
+        // Формула интерполяции: предсказываем позицию
+        int pos = left + (long long)(target - arr[left])
+                        * (right - left)
+                        / (arr[right] - arr[left]);
+
+        if (arr[pos] == target)
+            return pos;
+
+        if (arr[pos] < target)
+            left = pos + 1;   // Ищем в правой части
+        else
+            right = pos - 1;  // Ищем в левой части
+    }
+
+    return -1;  // Элемент не найден
+}
 
 int* gen_random_array(std::size_t n, int least, int max_step_width);
 
