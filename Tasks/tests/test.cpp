@@ -2,7 +2,6 @@
 #include "../templates/templates.hpp"
 #include "../templates/templates.cpp"
 #include <algorithm>
-#include <iostream>
 
 // ============================================================================
 // Тесты для gen_random_array
