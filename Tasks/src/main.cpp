@@ -3,25 +3,22 @@
 #include <iostream>
 #include "../templates/templates.cpp"
 #include "../templates/templates.hpp"
-
+#include <functional>
 
 using namespace std::chrono;
 
 
 int main(){
-    auto t0 = steady_clock::now();
-    size_t n = 10;
-    int* arr = gen_random_array(n);
-    for (int i = 0; i < n; i++) {
-        std::cout << arr[i] << std::endl;
-    }
-    // конечная отметка времени
-    auto t1 = steady_clock::now();
-    // преобразование времени (обычно наносекунды) в миллисекунды
-    auto delta = duration_cast<milliseconds>(t1 - t0);
-    std::cout << "time delta (milliseconds) " << delta.count();
 
+    using SearchFunc = std::function<int(int*, size_t, int)>;
+
+    int n = 1'000'000'00;
+    auto arr = measure_and_print("Генерация", gen_random_array, n, -10000, 5);
+
+    auto v1 = measure_and_print("Последовательный поиск", sequential_search, arr, n, 42);
+
+    auto v2 = measure_and_print("Бинарный поиск", binary_search, arr, n, 42);
+
+    auto v3 = measure_and_print("Интерполяционный поиск", interpolation_search, arr, n, 42);
     delete[] arr;
-    
-    return 0;
 }
