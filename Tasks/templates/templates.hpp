@@ -83,7 +83,7 @@ auto measure_time(Func func, Args&&... args) {
     auto ts1 = std::chrono::steady_clock::now();
     auto result = func(std::forward<Args>(args)...);
     auto ts2 = std::chrono::steady_clock::now();
-    auto delta = std::chrono::duration_cast<std::chrono::milliseconds>(ts2 - ts1);
+    auto delta = std::chrono::duration_cast<std::chrono::microseconds>(ts2 - ts1);
     return std::make_tuple(result, delta);
 }
 

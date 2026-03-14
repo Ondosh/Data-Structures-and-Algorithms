@@ -10,8 +10,6 @@ using namespace std::chrono;
 
 int main(){
 
-    using SearchFunc = std::function<int(int*, size_t, int)>;
-
     int n = 1'000'000'00;
     auto arr = measure_and_print("Генерация", gen_random_array, n, -10000, 5);
 
