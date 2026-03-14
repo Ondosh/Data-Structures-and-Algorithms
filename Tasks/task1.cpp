@@ -7,9 +7,9 @@ using namespace std::chrono;
 
 
 int main(){
-    auto t0 = steady_clock::now();
+    auto t0 = steady_clock::now(); // начальная отметка времени
     size_t n = 10;
-    int* arr = gen_random_array(n);
+    int* arr = gen_random_array(n, -10000, 5);
     for (int i = 0; i < n; i++) {
         std::cout << arr[i] << std::endl;
     }
