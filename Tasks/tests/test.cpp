@@ -215,6 +215,75 @@ TEST(InterpolationSearchTest, UniformDistribution) {
     EXPECT_EQ(interpolation_search(arr, 10, 55),  -1);
 }
 
+
+// ============================================================================
+// Тесты для predicate_search
+// ============================================================================
+
+TEST(PredicateSearchTest, FindFirstEven) {
+    int arr[] = {1, 3, 4, 7, 8};
+    EXPECT_EQ(predicate_search(arr, 5, [](const int& x) { return x % 2 == 0; }), 2);
+}
+
+TEST(PredicateSearchTest, FindFirstNegative) {
+    int arr[] = {1, 2, -3, 4, -5};
+    EXPECT_EQ(predicate_search(arr, 5, [](const int& x) { return x < 0; }), 2);
+}
+
+TEST(PredicateSearchTest, FoundAtBeginning) {
+    int arr[] = {42, 1, 2, 3, 4};
+    EXPECT_EQ(predicate_search(arr, 5, [](const int& x) { return x == 42; }), 0);
+}
+
+TEST(PredicateSearchTest, FoundAtEnd) {
+    int arr[] = {1, 2, 3, 4, 42};
+    EXPECT_EQ(predicate_search(arr, 5, [](const int& x) { return x == 42; }), 4);
+}
+
+TEST(PredicateSearchTest, NotFound) {
+    int arr[] = {1, 3, 5, 7, 9};
+    EXPECT_EQ(predicate_search(arr, 5, [](const int& x) { return x % 2 == 0; }), -1);
+}
+
+TEST(PredicateSearchTest, EmptyArray) {
+    EXPECT_EQ(predicate_search(static_cast<int*>(nullptr), 0, [](const int& x) { return x > 0; }), -1LL);
+}
+
+TEST(PredicateSearchTest, SingleElementMatches) {
+    int arr[] = {42};
+    EXPECT_EQ(predicate_search(arr, 1, [](const int& x) { return x > 0; }), 0);
+}
+
+TEST(PredicateSearchTest, SingleElementNoMatch) {
+    int arr[] = {-1};
+    EXPECT_EQ(predicate_search(arr, 1, [](const int& x) { return x > 0; }), -1);
+}
+
+TEST(PredicateSearchTest, ReturnsFirstMatch) {
+    // Несколько подходящих элементов — должен вернуть первый
+    int arr[] = {1, 4, 6, 8, 10};
+    EXPECT_EQ(predicate_search(arr, 5, [](const int& x) { return x % 2 == 0; }), 1);
+}
+
+TEST(PredicateSearchTest, AllElementsMatch) {
+    int arr[] = {2, 4, 6, 8, 10};
+    EXPECT_EQ(predicate_search(arr, 5, [](const int& x) { return x % 2 == 0; }), 0);
+}
+
+TEST(PredicateSearchTest, GreaterThanThreshold) {
+    int arr[] = {100, 200, 300, 10001, 20000};
+    EXPECT_EQ(predicate_search(arr, 5, [](const int& x) { return x > 10000; }), 3);
+}
+
+TEST(PredicateSearchTest, AlwaysFalsePredicate) {
+    int arr[] = {1, 2, 3, 4, 5};
+    EXPECT_EQ(predicate_search(arr, 5, [](const int&) { return false; }), -1);
+}
+
+TEST(PredicateSearchTest, AlwaysTruePredicate) {
+    int arr[] = {1, 2, 3, 4, 5};
+    EXPECT_EQ(predicate_search(arr, 5, [](const int&) { return true; }), 0);
+}
 // ============================================================================
 // main()
 // ============================================================================

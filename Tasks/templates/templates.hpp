@@ -88,6 +88,19 @@ long long interpolation_search(T* arr, size_t n, T target) {
     return -1;  // Элемент не найден
 }
 
+// Поиск по предикату
+// Возвращает индекс первого элемента, для которого предикат вернул true
+// Предикат — любая функция/лямбда вида: bool pred(const T& element)
+// Сложность: O(n) — перебираем все элементы, как при линейном поиске
+template<typename T, typename Predicate>
+long long predicate_search(T* arr, size_t n, Predicate pred) {
+    for (long long i = 0; i < n; i++) {
+        if (pred(arr[i]))
+            return i;
+    }
+    return -1;
+}
+
 int* gen_random_array(std::size_t n, int least, int max_step_width);
 
 /**
@@ -144,6 +157,11 @@ auto measure_time(Func func, Args&&... args) {
     auto ts1 = std::chrono::steady_clock::now();
     auto result = func(std::forward<Args>(args)...);
     auto ts2 = std::chrono::steady_clock::now();
+    
+    // volatile не позволяет компилятору кэшировать переменные 
+    volatile auto sink = result; 
+    (void)sink;
+
     auto delta = std::chrono::duration_cast<std::chrono::microseconds>(ts2 - ts1);
     return std::make_tuple(result, delta);
 }
@@ -153,7 +171,48 @@ template<typename Func, typename... Args>
 auto measure_and_print(const char* name, Func func, Args&&... args) {
     auto [result, delta] = measure_time(func, std::forward<Args>(args)...);
     std::cout << name << ": результат = " << result 
-         << ", время = " << delta.count() << " мкс" << std::endl;
+         << ", время = " << delta.count() << " нс" << std::endl;
+    return result;
+}
+
+template<typename Func, typename... Args>
+auto measure_time_avg(int runs, Func func, Args&&... args) {
+    // Прогрев — первый запуск не считаем
+    func(args...);
+
+    auto ts1 = std::chrono::steady_clock::now();
+    for (int i = 0; i < runs; ++i)
+        func(args...);
+    auto ts2 = std::chrono::steady_clock::now();
+
+    volatile auto sink = 0; (void)sink;
+
+    auto total = std::chrono::duration_cast<std::chrono::microseconds>(ts2 - ts1);
+    return total / runs;
+}
+
+// Усреднённое измерение с выводом результата и времени
+template<typename Func, typename... Args>
+auto measure_and_print_avg(const char* name, int runs, Func func, Args&&... args) {
+    // Один запуск чтобы получить результат для вывода
+    auto result = func(args...);
+    volatile auto sink = result; (void)sink;
+
+    // Прогрев
+    func(args...);
+
+    auto ts1 = std::chrono::steady_clock::now();
+    for (int i = 0; i < runs; ++i)
+        func(args...);
+    auto ts2 = std::chrono::steady_clock::now();
+
+    auto total = std::chrono::duration_cast<std::chrono::nanoseconds>(ts2 - ts1);
+    auto avg = total / runs;
+
+    std::cout << name 
+              << ": результат = " << result
+              << ", среднее время (" << runs << " запусков) = " << avg.count() << " нс"
+              << std::endl;
     return result;
 }
 
