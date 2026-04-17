@@ -25,6 +25,55 @@ using namespace std::chrono;
  *       При n = 1 000 000 000 потребуется ~4 ГБ оперативной памяти (int = 4 байта).
  */
 int main() {
+        // ==================== ЧАСТЬ 1: СОРТИРОВКИ ====================
+    std::cout << "\n========== СОРТИРОВКИ ==========\n" << std::endl;
+    
+    // Для сортировки возьмём массив поменьше (пузырёк очень медленный)
+    size_t n_sort = 20'000;  // 10 тысяч элементов
+    
+    // Генерируем неотсортированный массив
+    std::cout << "Генерация неотсортированного массива из " << n_sort << " элементов..." << std::endl;
+    int* unsorted_arr = gen_random_unsorted_array(n_sort, 0, 100'000);
+    
+    // Создаём копии для разных сортировок
+    int* arr_for_bubble = new int[n_sort];
+    int* arr_for_quick = new int[n_sort];
+    
+    copy_array(unsorted_arr, arr_for_bubble, n_sort);
+    copy_array(unsorted_arr, arr_for_quick, n_sort);
+    
+    std::cout << "Исходный массив (первые 20 элементов): ";
+    print_array(unsorted_arr, n_sort, "");
+    
+    // Пузырьковая сортировка (только для демонстрации, очень медленная)
+    std::cout << "\n--- Пузырьковая сортировка O(n^2) ---" << std::endl;
+    auto bubble_time = measure_time_sort_avg(1, bubble_sort<int>, arr_for_bubble, n_sort);
+    std::cout << "Время: " << bubble_time.count() << " мкс" << std::endl;
+    std::cout << "Отсортирован: " << (isSorted(arr_for_bubble, n_sort) ? "да" : "нет") << std::endl;
+    std::cout << "Первые 20 элементов после сортировки: ";
+    print_array(arr_for_bubble, n_sort, "");
+    
+    // Быстрая сортировка
+    std::cout << "\n--- Быстрая сортировка O(n log n) ---" << std::endl;
+    auto quick_time = measure_time_sort_avg(1,[](int* arr, size_t n) {
+        quick_sort(arr, 0, static_cast<int>(n - 1));
+    }, arr_for_quick, n_sort);
+    std::cout << "Время: " << quick_time.count() << " мкс" << std::endl;
+    std::cout << "Отсортирован: " << (isSorted(arr_for_quick, n_sort) ? "да" : "нет") << std::endl;
+    std::cout << "Первые 20 элементов после сортировки: ";
+    print_array(arr_for_quick, n_sort, "");
+    
+    // Сравнение
+    std::cout << "\n--- Сравнение сортировок ---" << std::endl;
+    std::cout << "Быстрая сортировка быстрее пузырьковой в " 
+              << static_cast<double>(bubble_time.count()) / quick_time.count() 
+              << " раз" << std::endl;
+    
+    // Очищаем память от временных массивов сортировок
+    delete[] unsorted_arr;
+    delete[] arr_for_bubble;
+    delete[] arr_for_quick;
+
     // Количество чисел в массиве
     size_t n = 1'000'000'000;
 

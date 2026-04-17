@@ -6,6 +6,7 @@
 #include <cstddef>
 #include <string>
 #include <chrono>
+#include <utility>
 
 template<typename Func, typename... Args>
 double measure_time_avg_micro(int runs, Func func, Args... args) {
@@ -188,7 +189,7 @@ auto measure_and_print(const char* name, Func func, Args&&... args) {
 }
 
 template<typename Func, typename... Args>
-auto measure_time_avg(int runs, Func func, Args&&... args) {
+auto measure_time_search_avg(int runs, Func func, Args&&... args) {
     // Прогрев — первый запуск не считаем
     func(args...);
 
@@ -203,6 +204,19 @@ auto measure_time_avg(int runs, Func func, Args&&... args) {
     return total / runs;
 }
 
+template<typename Func, typename... Args>
+auto measure_time_sort_avg(int runs, Func func, Args&&... args) {
+
+    auto ts1 = std::chrono::steady_clock::now();
+    for (int i = 0; i < runs; ++i)
+        func(args...);
+    auto ts2 = std::chrono::steady_clock::now();
+
+    volatile auto sink = 0; (void)sink;
+
+    auto total = std::chrono::duration_cast<std::chrono::microseconds>(ts2 - ts1);
+    return total / runs;
+}
 // Усреднённое измерение с выводом результата и времени
 template<typename Func, typename... Args>
 auto measure_and_print_avg(const char* name, int runs, Func func, Args&&... args) {
@@ -227,5 +241,70 @@ auto measure_and_print_avg(const char* name, int runs, Func func, Args&&... args
               << std::endl;
     return result;
 }
+
+// Пузырьковая сортировка O(n^2)
+template<typename T>
+void bubble_sort(T* arr, size_t n) {
+    for (size_t i = 0; i < n - 1; i++) {
+        bool swapped = false;
+        for (size_t j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                std::swap(arr[j], arr[j + 1]);
+                swapped = true;
+            }
+        }
+        if (!swapped) break;
+    }
+}
+
+template<typename T>
+void quick_sort(T* arr, int left, int right) {
+    if (left >= right) return;
+
+    // pivot (середина)
+    T pivot = arr[left + (right - left) / 2];
+
+    int i = left;
+    int j = right;
+
+    while (i <= j) {
+        while (arr[i] < pivot) i++;
+        while (arr[j] > pivot) j--;
+
+        if (i <= j) {
+            std::swap(arr[i], arr[j]);
+            i++;
+            j--;
+        }
+    }
+
+    // рекурсия на части
+    if (left < j)
+        quick_sort(arr, left, j);
+
+    if (i < right)
+        quick_sort(arr, i, right);
+}
+
+// Копирование массива
+template<typename T>
+void copy_array(const T* src, T* dst, size_t n) {
+    for (size_t i = 0; i < n; ++i) {
+        dst[i] = src[i];
+    }
+}
+
+// Вывод массива (для отладки)
+template<typename T>
+void print_array(const T* arr, size_t n, const std::string& name = "Array") {
+    std::cout << name << " [";
+    for (size_t i = 0; i < n && i < 20; ++i) {
+        std::cout << arr[i];
+        if (i < n - 1 && i < 19) std::cout << ", ";
+    }
+    if (n > 20) std::cout << ", ...";
+    std::cout << "]" << std::endl;
+}
+
 
 #endif
