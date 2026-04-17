@@ -5,6 +5,18 @@
 #include <fstream>
 #include <cstddef>
 #include <string>
+#include <chrono>
+
+template<typename Func, typename... Args>
+double measure_time_avg_micro(int runs, Func func, Args... args) {
+    auto start = std::chrono::high_resolution_clock::now();
+    for (int i = 0; i < runs; ++i) {
+        func(args...);
+    }
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
+    return duration.count() / 1000.0 / runs; // возвращаем микросекунды
+}
 
 // Последовательный (линейный) поиск
 // Перебирает все элементы подряд слева направо.
@@ -101,7 +113,7 @@ long long predicate_search(T* arr, size_t n, Predicate pred) {
     return -1;
 }
 
-int* gen_random_array(std::size_t n, int least, int max_step_width);
+int* gen_random_sorted_array(std::size_t n, int least, int max_step_width);
 
 /**
  * @brief Записывает массив в текстовый файл, разделяя элементы пробелами.

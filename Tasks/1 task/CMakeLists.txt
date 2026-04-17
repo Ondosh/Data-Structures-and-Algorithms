@@ -16,14 +16,14 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 # === Основное приложение ===
-add_executable(main src/main.cpp)
+add_executable(main src/main.cpp "src/plots.cpp")
 target_include_directories(main PRIVATE ${CMAKE_SOURCE_DIR}/include)
 
 # === Тесты ===
 add_executable(unit_tests
     tests/test.cpp
     # НЕ добавляйте templates.hpp сюда!
-)
+ "src/plots.cpp")
 target_include_directories(unit_tests PRIVATE ${CMAKE_SOURCE_DIR}/include)
 target_link_libraries(unit_tests PRIVATE GTest::gtest_main)
 

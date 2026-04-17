@@ -9,7 +9,7 @@
 
 TEST(GenRandomArrayTest, ReturnsNonNull) {
     // least <= 0, max_step_width >= 1
-    int* arr = gen_random_array(10, -100, 100);
+    int* arr = gen_random_sorted_array(10, -100, 100);
     EXPECT_NE(arr, nullptr);
     delete[] arr;
 }
@@ -19,7 +19,7 @@ TEST(GenRandomArrayTest, FirstElementInRange) {
     const int least = -10000;
     const int max_step = 1000;
     
-    int* arr = gen_random_array(n, least, max_step);
+    int* arr = gen_random_sorted_array(n, least, max_step);
     ASSERT_NE(arr, nullptr);
     
     // Первый элемент должен быть в [least, 0]
@@ -34,7 +34,7 @@ TEST(GenRandomArrayTest, MonotonicIncreasing) {
     const int least = -500;
     const int max_step = 100;
     
-    int* arr = gen_random_array(n, least, max_step);
+    int* arr = gen_random_sorted_array(n, least, max_step);
     ASSERT_NE(arr, nullptr);
     
     // Все последующие элементы должны быть строго больше предыдущих
@@ -46,7 +46,7 @@ TEST(GenRandomArrayTest, MonotonicIncreasing) {
 }
 
 TEST(GenRandomArrayTest, EmptyArray) {
-    int* arr = gen_random_array(0, -100, 100);
+    int* arr = gen_random_sorted_array(0, -100, 100);
     EXPECT_NE(arr, nullptr);  // или EXPECT_EQ, если функция возвращает nullptr для n=0
     delete[] arr;
 }
@@ -54,7 +54,7 @@ TEST(GenRandomArrayTest, EmptyArray) {
 TEST(GenRandomArrayTest, SingleElement) {
     // Для n=1 генерируется только первый элемент в диапазоне [least, 0]
     const int least = -50;
-    int* arr = gen_random_array(1, least, 100);
+    int* arr = gen_random_sorted_array(1, least, 100);
     ASSERT_NE(arr, nullptr);
     EXPECT_GE(arr[0], least);
     EXPECT_LE(arr[0], 0);
