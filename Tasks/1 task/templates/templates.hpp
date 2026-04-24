@@ -244,17 +244,23 @@ auto measure_and_print_avg(const char* name, int runs, Func func, Args&&... args
 
 // Пузырьковая сортировка O(n^2)
 template<typename T>
-void bubble_sort(T* arr, size_t n) {
-    for (size_t i = 0; i < n - 1; i++) {
-        bool swapped = false;
-        for (size_t j = 0; j < n - i - 1; j++) {
-            if (arr[j] > arr[j + 1]) {
-                std::swap(arr[j], arr[j + 1]);
+void bubble_sort(T* arr, size_t n){
+    bool swapped = false;
+    for (size_t i = 0; i < n - 1; i++)
+    {
+        for (size_t j = 0; j < n - i - 1; j++)
+        {
+            if (arr[j] > arr[j+1])
+            {
+                std::swap(arr[j], arr[j+1]);
                 swapped = true;
             }
+            
+            swapped = false;
         }
-        if (!swapped) break;
+        
     }
+    
 }
 
 template<typename T>
@@ -264,11 +270,11 @@ void quick_sort(T* arr, int left, int right) {
     // pivot (середина)
     T pivot = arr[left + (right - left) / 2];
 
-    int i = left;
-    int j = right;
+    int i = left; //0
+    int j = right; //99
 
-    while (i <= j) {
-        while (arr[i] < pivot) i++;
+    while (i <= j) { // 1 <= 100
+        while (arr[i] < pivot) i++; 
         while (arr[j] > pivot) j--;
 
         if (i <= j) {
@@ -305,6 +311,7 @@ void print_array(const T* arr, size_t n, const std::string& name = "Array") {
     if (n > 20) std::cout << ", ...";
     std::cout << "]" << std::endl;
 }
+
 
 
 #endif
