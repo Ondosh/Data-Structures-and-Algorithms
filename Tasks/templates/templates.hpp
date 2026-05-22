@@ -263,19 +263,33 @@ void bubble_sort(T* arr, size_t n){
     
 }
 
+/**
+ * @brief Разделяет подмассив на две части относительно опорного элемента (pivot).
+ *
+ * Зачем выносить в отдельную функцию:
+ *  1. Единственная ответственность (Single Responsibility Principle) —
+ *     quick_sort отвечает за рекурсию, partition — за перестановку.
+ *  2. Переиспользование — partition можно вызвать отдельно, например,
+ *     для алгоритма "k-й по величине элемент" (nth_element) без полной сортировки.
+ *  3. Тестируемость — partition легко проверить юнит-тестом независимо от сортировки.
+ *  4. Читаемость — тело quick_sort сокращается до трёх смысловых строк.
+ *
+ * @param arr   Указатель на массив.
+ * @param left  Левая граница подмассива (включительно).
+ * @param right Правая граница подмассива (включительно).
+ * @return std::pair<int,int> Пара {i, j} — новые границы для рекурсивных вызовов.
+ */
 template<typename T>
-void quick_sort(T* arr, int left, int right) {
-    if (left >= right) return;
-
-    // pivot (середина)
+std::pair<int, int> partition(T* arr, int left, int right) {
+    // Опорный элемент берём из середины — защита от O(n²) на уже отсортированных данных
     T pivot = arr[left + (right - left) / 2];
 
-    int i = left; //0
-    int j = right; //99
+    int i = left;
+    int j = right;
 
-    while (i <= j) { // 1 <= 100
-        while (arr[i] < pivot) i++; 
-        while (arr[j] > pivot) j--;
+    while (i <= j) {
+        while (arr[i] < pivot) i++;  // ищем элемент, который не на своей стороне
+        while (arr[j] > pivot) j--;  // ищем элемент, который не на своей стороне
 
         if (i <= j) {
             std::swap(arr[i], arr[j]);
@@ -284,10 +298,36 @@ void quick_sort(T* arr, int left, int right) {
         }
     }
 
-    // рекурсия на части
+    // Возвращаем обе границы — quick_sort использует их для рекурсии
+    return {i, j};
+}
+
+/**
+ * @brief Сортирует подмассив arr[left..right] методом быстрой сортировки.
+ *
+ * Делегирует разбиение функции partition, затем рекурсивно сортирует
+ * две получившиеся части. Тело функции намеренно минимально —
+ * вся логика разбиения инкапсулирована в partition.
+ *
+ * Сложность: O(n log n) в среднем, O(n²) в худшем случае.
+ * Глубина рекурсии: O(log n) в среднем.
+ *
+ * @param arr   Указатель на массив.
+ * @param left  Левая граница сортируемого диапазона.
+ * @param right Правая граница сортируемого диапазона.
+ */
+template<typename T>
+void quick_sort(T* arr, int left, int right) {
+    if (left >= right) return;  // база рекурсии: 0 или 1 элемент — уже отсортировано
+
+    // Разбиваем и получаем новые границы — вся логика скрыта в partition
+    auto [i, j] = partition(arr, left, right);
+
+    // Рекурсивно сортируем левую часть [left..j]
     if (left < j)
         quick_sort(arr, left, j);
 
+    // Рекурсивно сортируем правую часть [i..right]
     if (i < right)
         quick_sort(arr, i, right);
 }
@@ -312,6 +352,15 @@ void print_array(const T* arr, size_t n, const std::string& name = "Array") {
     std::cout << "]" << std::endl;
 }
 
-
+template<typename T>
+long long std_search_wrapper(T* arr, size_t n, T target) {
+    auto it = std::search(arr, arr + n, &target, &target + 1);
+    
+    if (it != arr + n) {
+        return it - arr; 
+    } else {
+        return -1;       
+    }
+}
 
 #endif

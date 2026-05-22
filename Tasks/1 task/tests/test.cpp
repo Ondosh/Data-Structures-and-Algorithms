@@ -110,7 +110,6 @@ TEST(SequentialSearchTest, WithDuplicates) {
 
 TEST(BinarySearchTest, FoundAtBeginning) {
     int arr[] = {42, 100, 200, 300, 400};
-    std::sort(arr, arr + 5);
     EXPECT_EQ(binary_search(arr, 5, 42), 0);
 }
 
@@ -121,7 +120,6 @@ TEST(BinarySearchTest, FoundAtMiddle) {
 
 TEST(BinarySearchTest, FoundAtEnd) {
     int arr[] = {1, 2, 3, 4, 42};
-    std::sort(arr, arr + 5);
     EXPECT_EQ(binary_search(arr, 5, 42), 4);
 }
 

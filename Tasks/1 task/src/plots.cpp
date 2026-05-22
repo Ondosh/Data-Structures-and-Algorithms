@@ -5,13 +5,6 @@
 #include <algorithm>
 #include <chrono>
 
-// Добавьте эту функцию-обертку перед main:
-template<typename T>
-long long std_search_wrapper(T* arr, size_t n, T target) {
-    auto it = std::search(arr, arr + n, &target, &target + 1);
-    return (it != arr + n) ? (it - arr) : -1;
-}
-
 int main() {
     std::ofstream out("results.csv");
     out << "n;seq;bin;interp\n";
@@ -34,7 +27,7 @@ int main() {
         int runs_fast = 100000;                          // для бинарного (всегда много)
         
         auto seq_time = measure_time_avg_micro(runs_slow, sequential_search<int>, data, n, target);
-        auto cseq_time = measure_time_avg_micro(runs_fast, std_search_wrapper<int>, data, n, target);
+        auto cseq_time = measure_time_avg_micro(runs_slow, std_search_wrapper<int>, data, n, target);
         auto bin_time = measure_time_avg_micro(runs_fast, binary_search<int>, data, n, target);
         auto int_time = measure_time_avg_micro(runs_fast, interpolation_search<int>, data, n, target);
         out << n << ";" << seq_time << ";" << cseq_time << ";" 
