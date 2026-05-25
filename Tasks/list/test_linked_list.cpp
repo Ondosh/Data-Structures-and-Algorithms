@@ -6,9 +6,9 @@
 #define RUN_TEST(func) \
     do { func(); std::cout << "  [OK] " #func "\n"; } while(0)
 
-// ═════════════════════════════════════════════════════════════════
+
 // push_front / push_back
-// ═════════════════════════════════════════════════════════════════
+
 
 void test_push_back_size() {
     DoublyLinkedList<int> list;
@@ -51,9 +51,9 @@ void test_not_empty_after_push() {
     assert(!list.empty());
 }
 
-// ═════════════════════════════════════════════════════════════════
+
 // search
-// ═════════════════════════════════════════════════════════════════
+
 
 void test_search_found() {
     DoublyLinkedList<int> list;
@@ -77,9 +77,9 @@ void test_search_empty_list() {
     assert(!list.search(5));
 }
 
-// ═════════════════════════════════════════════════════════════════
+
 // insert_after
-// ═════════════════════════════════════════════════════════════════
+
 
 void test_insert_after_middle() {
     DoublyLinkedList<int> list;
@@ -111,9 +111,9 @@ void test_insert_after_not_found() {
     assert(threw);
 }
 
-// ═════════════════════════════════════════════════════════════════
+
 // pop_front / pop_back / remove
-// ═════════════════════════════════════════════════════════════════
+
 
 void test_pop_front() {
     DoublyLinkedList<int> list;
@@ -207,9 +207,9 @@ void test_remove_single_element() {
     assert(list.empty());
 }
 
-// ═════════════════════════════════════════════════════════════════
+
 // concat
-// ═════════════════════════════════════════════════════════════════
+
 
 void test_concat_basic() {
     DoublyLinkedList<int> a, b;
@@ -250,9 +250,9 @@ void test_concat_to_empty() {
     assert(a.search(2));
 }
 
-// ═════════════════════════════════════════════════════════════════
+
 // Разные типы (шаблон)
-// ═════════════════════════════════════════════════════════════════
+
 
 void test_string_list() {
     DoublyLinkedList<std::string> list;
@@ -273,7 +273,7 @@ void test_double_list() {
     assert(!list.search(3.14));
 }
 
-// ═════════════════════════════════════════════════════════════════
+
 
 int main() {
     std::cout << "Тесты DoublyLinkedList:\n";
