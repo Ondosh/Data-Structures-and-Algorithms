@@ -3,14 +3,14 @@
 #include "text_utils.hpp"
 #include "../templates/templates.hpp"   // measure_and_print_avg, measure_time
 
-// ─────────────────────────────────────────────────────────────────
+
 // Вспомогательные обёртки для measure_and_print_avg:
 // шаблонные функции не принимают перегрузки напрямую через указатель,
 // поэтому оборачиваем вызовы в лямбды.
-// ─────────────────────────────────────────────────────────────────
+
 
 int main() {
-    // ── 1. Читаем текст из файла ──────────────────────────────
+    // Читаем текст из файла
     const std::string filename = "input.txt";
     std::string text = read_file(filename);
 
@@ -24,7 +24,7 @@ int main() {
               << text.substr(0, std::min<std::size_t>(80, text.size()))
               << "\"\n\n";
 
-    // ── 2. Однократный подсчёт (проверка корректности) ────────
+    // Однократный подсчёт (проверка корректности)
     std::size_t result_iter = count_digits_iterative(text);
     std::size_t result_rec  = count_digits_recursive(text);
 
@@ -37,7 +37,7 @@ int main() {
     }
     std::cout << "Результаты совпадают.\n\n";
 
-    // ── 3. Замер времени через шаблоны из templates.hpp ───────
+    // Замер времени через шаблоны из templates.hpp
     const int RUNS = 10'000;   // количество повторений для усреднения
     std::cout << "Замер времени (" << RUNS << " запусков каждой функции):\n";
     std::cout << std::string(55, '-') << "\n";
@@ -58,7 +58,7 @@ int main() {
 
     std::cout << std::string(55, '-') << "\n";
 
-    // ── 4. Однократное измерение через measure_time ────────────
+    //Однократное измерение через measure_time
     std::cout << "\nОднократный замер (measure_time):\n";
 
     auto [res1, time1] = measure_time(
