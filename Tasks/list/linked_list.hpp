@@ -21,12 +21,16 @@ class DoublyLinkedList {
     
     // Внутренний узел списка
     // Объявлен приватным — пользователь работает только с итератором
-    
-    struct Node {
+    // Можно сделать внешним, но нежелательно с точки зрения инкапсуляции
+    // Node является частью этого класса, поэтому не стоит его выделять внешне
+    // Не обязательно прятать, т.к. можно использовать например в кольцевых списках
+public:    struct Node {
         T     data;   // Полезная нагрузка
         Node* prev;   // Указатель на предыдущий узел (nullptr у head)
         Node* next;   // Указатель на следующий узел  (nullptr у tail)
-
+        
+        // Explicit - запрещает неявные преобразования типов вроде
+        // foo(Node node){} foo(42) - надо foo(Node(42)
         explicit Node(const T& value)
             : data(value), prev(nullptr), next(nullptr) {}
     };
@@ -34,8 +38,9 @@ class DoublyLinkedList {
     Node*  head_;   // Указатель на первый элемент
     Node*  tail_;   // Указатель на последний элемент
 
-public:
 
+    // Правило трёх - если конструктор 
+    // Правило пяти
    // Конструктор / деструктор
     // Список инициализации. После : объявленные поля сразу получают nullptr
     DoublyLinkedList() : head_(nullptr), tail_(nullptr) {}
@@ -320,6 +325,22 @@ private:
         }
         return nullptr;
     }
+
+    /**
+     * @brief Внутренний метод: ищет узел по значению. O(n).
+     *
+     * Вынесен отдельно чтобы не дублировать цикл поиска в search(),
+     * remove() и insert_after().
+     *
+     * @return Node* Указатель на узел или nullptr если не найден.
+     */
+Node* find_node_by_index(size_t index) const {
+    Node* current = head_;
+    for (size_t i = 0; i < index && current != nullptr; i++) {
+        current = current->next;
+    }
+    return current;
+}
 };
 
 #endif // LINKED_LIST_HPP

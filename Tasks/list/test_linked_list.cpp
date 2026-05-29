@@ -274,6 +274,77 @@ void test_double_list() {
 }
 
 
+// После удаления из середины — соседи корректно перешиты?
+void test_remove_middle_links() {
+    DoublyLinkedList<int> list;
+    list.push_back(1);
+    list.push_back(2);
+    list.push_back(3);
+    list.remove(2);
+    // Можно ли добавить после 1 и до 3?
+    list.insert_after(1, 99);
+    assert(list.search(99));
+    assert(list.size() == 3);
+}
+
+// После pop_front — новый head не имеет prev?
+void test_pop_front_head_prev_is_null() {
+    DoublyLinkedList<int> list;
+    list.push_back(1);
+    list.push_back(2);
+    list.pop_front();
+    // head теперь 2, его prev должен быть nullptr
+    // Косвенно: push_front должен корректно работать после этого
+    list.push_front(0);
+    assert(list.size() == 2);
+    assert(list.search(0));
+}
+
+// Можно ли модифицировать список после concat?
+void test_concat_then_remove() {
+    DoublyLinkedList<int> a, b;
+    a.push_back(1);
+    b.push_back(2);
+    a.concat(b);
+    a.remove(2); // не должен трогать b
+    assert(a.size() == 1);
+    assert(b.size() == 1); // b не пострадал
+}
+
+// concat с самим собой — UB или корректное поведение?
+void test_concat_self() {
+    DoublyLinkedList<int> a;
+    a.push_back(1);
+    a.push_back(2);
+    a.concat(a); // бесконечный цикл?
+    // Минимум — не крашится
+}
+
+void test_remove_duplicate_removes_first_only() {
+    DoublyLinkedList<int> list;
+    list.push_back(5);
+    list.push_back(5);
+    list.remove(5);
+    assert(list.size() == 1); // удалён только первый
+    assert(list.search(5));   // второй остался
+}
+
+void test_search_with_duplicates() {
+    DoublyLinkedList<int> list;
+    list.push_back(1);
+    list.push_back(1);
+    assert(list.search(1));
+    assert(list.size() == 2);
+}
+
+void test_pop_front_after_single_push_throws() {
+    DoublyLinkedList<int> list;
+    list.push_front(1);
+    list.pop_front();       // удаляем единственный элемент
+    bool threw = false;
+    try { list.pop_front(); } catch (const std::runtime_error&) { threw = true; }
+    assert(threw);
+}
 
 int main() {
     std::cout << "Тесты DoublyLinkedList:\n";
@@ -318,6 +389,14 @@ int main() {
     RUN_TEST(test_string_list);
     RUN_TEST(test_double_list);
 
+    std::cout << "\nновые\n";
+    RUN_TEST(test_remove_middle_links);
+    RUN_TEST(test_pop_front_head_prev_is_null);
+    RUN_TEST(test_concat_then_remove);
+    RUN_TEST(test_concat_self);
+    RUN_TEST(test_remove_duplicate_removes_first_only);
+    RUN_TEST(test_search_with_duplicates);
+    RUN_TEST(test_pop_front_after_single_push_throws);
     std::cout << std::string(45, '-') << "\n";
     std::cout << "Все тесты пройдены.\n";
     return 0;
