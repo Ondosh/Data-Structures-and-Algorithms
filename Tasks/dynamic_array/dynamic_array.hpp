@@ -94,8 +94,8 @@ public:
     DynamicArray(DynamicArray&& other) noexcept
         : data_(other.data_), size_(other.size_), capacity_(other.capacity_)
     {
-        other.data_     = nullptr;
-        other.size_     = 0;
+        other.data_ = nullptr;
+        other.size_ = 0;
         other.capacity_ = 0;
     }
 
@@ -106,11 +106,11 @@ public:
     DynamicArray& operator=(DynamicArray&& other) noexcept {
         if (this == &other) return *this;  // защита от a = std::move(a)
         delete[] data_;                    // освобождаем свою старую память
-        data_           = other.data_;
-        size_           = other.size_;
-        capacity_       = other.capacity_;
-        other.data_     = nullptr;
-        other.size_     = 0;
+        data_ = other.data_;
+        size_ = other.size_;
+        capacity_ = other.capacity_;
+        other.data_ = nullptr;
+        other.size_ = 0;
         other.capacity_ = 0;
         return *this;
     }
@@ -229,7 +229,7 @@ public:
     void reserve(std::size_t new_cap) {
         if (new_cap <= capacity_) return;
         T* new_data = new T[new_cap];
-        for (std::size_t i = 0; i < size_; ++i)
+        for (std::size_t i = 0; i < size_; ++i) // здесь выполняется перемещение старого массива в новый
             new_data[i] = std::move(data_[i]);
         delete[] data_;
         data_     = new_data;
@@ -238,8 +238,8 @@ public:
 
     // Меняет содержимое двух массивов местами за O(1).
     void swap(DynamicArray& other) noexcept {
-        std::swap(data_,     other.data_);
-        std::swap(size_,     other.size_);
+        std::swap(data_, other.data_);
+        std::swap(size_, other.size_);
         std::swap(capacity_, other.capacity_);
     }
 

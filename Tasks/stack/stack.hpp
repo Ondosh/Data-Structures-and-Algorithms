@@ -44,7 +44,8 @@ public:
 
     // Добавляет элемент на вершину стека
     void push(const T& value) {
-        top_ = new Node(value, top_);
+        Node* new_node = new Node(value, top_);
+        top_ = new_node;
         ++size_;
     }
 
