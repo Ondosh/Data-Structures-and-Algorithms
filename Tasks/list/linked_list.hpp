@@ -11,7 +11,7 @@
  * что позволяет двигаться по списку в обоих направлениях.
  *
  * Структура памяти:
- *   nullptr ← [head] ⇄ [node] ⇄ ... ⇄ [tail] → nullptr
+ *   nullptr -> [head] <->  [node] <-> ... <-> [tail] -> nullptr
  *
  * @tparam T Тип хранимых элементов.
  */
@@ -24,7 +24,58 @@ class DoublyLinkedList {
     // Можно сделать внешним, но нежелательно с точки зрения инкапсуляции
     // Node является частью этого класса, поэтому не стоит его выделять внешне
     // Не обязательно прятать, т.к. можно использовать например в кольцевых списках
-public:    struct Node {
+public:
+
+    /**
+     * @brief Возвращает true если список пуст. O(1).
+     */
+    bool empty() const { return head_ == nullptr; }
+
+
+    /**
+     * @brief Удаляет первый элемент списка. O(1).
+     * @throws std::runtime_error Если список пуст.
+     */
+    void pop_front() {
+        if (head_ == nullptr) {
+            throw std::runtime_error("pop_front: список пуст");
+        }
+
+        Node* to_delete = head_;
+        head_ = head_->next;
+
+        if (head_ != nullptr) {
+            head_->prev = nullptr;  // Новый head не имеет предшественника
+        } else {
+            tail_ = nullptr;        // Список стал пустым
+        }
+
+        delete to_delete;
+    }
+
+
+    /**
+     * @brief Вставляет элемент в начало списка. O(1).
+     *
+     * Новый узел становится head. Если список был пуст —
+     * он же становится и tail.
+     *
+     * @param value Значение для вставки.
+     */
+    void push_front(const T& value) {
+        Node* node = new Node(value);
+
+        if (head_ == nullptr) {
+            // Список пуст — единственный узел одновременно head и tail
+            head_ = tail_ = node;
+        } else {
+            // Подвешиваем новый узел перед текущим head
+            node->next  = head_;
+            head_->prev = node;
+            head_       = node;
+        }
+    }
+    struct Node {
         T     data;   // Полезная нагрузка
         Node* prev;   // Указатель на предыдущий узел (nullptr у head)
         Node* next;   // Указатель на следующий узел  (nullptr у tail)
@@ -70,29 +121,7 @@ public:    struct Node {
 
     
     // Вставка
-    
 
-    /**
-     * @brief Вставляет элемент в начало списка. O(1).
-     *
-     * Новый узел становится head. Если список был пуст —
-     * он же становится и tail.
-     *
-     * @param value Значение для вставки.
-     */
-    void push_front(const T& value) {
-        Node* node = new Node(value);
-
-        if (head_ == nullptr) {
-            // Список пуст — единственный узел одновременно head и tail
-            head_ = tail_ = node;
-        } else {
-            // Подвешиваем новый узел перед текущим head
-            node->next  = head_;
-            head_->prev = node;
-            head_       = node;
-        }
-    }
 
     /**
      * @brief Вставляет элемент в конец списка. O(1).
@@ -152,26 +181,6 @@ public:    struct Node {
     // Удаление
     
 
-    /**
-     * @brief Удаляет первый элемент списка. O(1).
-     * @throws std::runtime_error Если список пуст.
-     */
-    void pop_front() {
-        if (head_ == nullptr) {
-            throw std::runtime_error("pop_front: список пуст");
-        }
-
-        Node* to_delete = head_;
-        head_ = head_->next;
-
-        if (head_ != nullptr) {
-            head_->prev = nullptr;  // Новый head не имеет предшественника
-        } else {
-            tail_ = nullptr;        // Список стал пустым
-        }
-
-        delete to_delete;
-    }
 
     /**
      * @brief Удаляет последний элемент списка. O(1).
@@ -295,10 +304,6 @@ public:    struct Node {
     // Утилиты
     
 
-    /**
-     * @brief Возвращает true если список пуст. O(1).
-     */
-    bool empty() const { return head_ == nullptr; }
 
     /**
      * @brief Выводит список в формате: [a <-> b <-> c]. O(n).

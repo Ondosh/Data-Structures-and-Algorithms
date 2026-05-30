@@ -219,9 +219,9 @@ public:
     // Утилиты
     
 
-    std::size_t size()     const noexcept { return size_; }
+    std::size_t size() const noexcept { return size_; }
     std::size_t capacity() const noexcept { return capacity_; }
-    bool        empty()    const noexcept { return size_ == 0; }
+    bool empty() const noexcept { return size_ == 0; }
 
     // Резервирует память под new_cap элементов.
     // Если new_cap <= capacity_ - ничего не делает.
@@ -232,7 +232,7 @@ public:
         for (std::size_t i = 0; i < size_; ++i) // здесь выполняется перемещение старого массива в новый
             new_data[i] = std::move(data_[i]);
         delete[] data_;
-        data_     = new_data;
+        data_ = new_data;
         capacity_ = new_cap;
     }
 
@@ -244,13 +244,13 @@ public:
     }
 
 private:
-    T*          data_;      // указатель на данные
-    std::size_t size_;      // текущее количество элементов
+    T* data_; // указатель на данные
+    std::size_t size_; // текущее количество элементов
     std::size_t capacity_;  // выделенная ёмкость
 
     // Проверяет что есть место для ещё одного элемента.
     // Если нет - удваивает ёмкость (или ставит 1 если массив был пуст).
-    // Удвоение даёт амортизированную O(1) для push_back.
+    // Удвоение даёт O(1) для push_back.
     void ensure_capacity() {
         if (size_ + 1 > capacity_)
             reserve(capacity_ == 0 ? 1 : capacity_ * 2);
