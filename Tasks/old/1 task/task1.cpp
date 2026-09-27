@@ -1,7 +1,7 @@
 #include <chrono>
 #include <random>   // библиотека для генерации случайных чисел
 #include <iostream>
-#include "./templates/templates.cpp"
+#include "tasks\templates\templates.cpp"
 
 using namespace std::chrono;
 
