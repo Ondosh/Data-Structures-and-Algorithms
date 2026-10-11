@@ -29,3 +29,23 @@ Makefile
 Thumbs.db
 
 memorize.cpp
+
+# Служебная папка Visual Studio
+.vs/
+
+# Результаты сборки
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+*.exe
+*.obj
+*.pdb
+*.ilk
+*.idb
+*.tlog
+*.log
+
+# Личные настройки проекта
+*.user
+*.suo
