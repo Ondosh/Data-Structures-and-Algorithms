@@ -113,6 +113,48 @@ public:
     }
 
     // ---------------------------------------------------------------
+    // ПОИСК С ПОДСЧЁТОМ ОПЕРАЦИЙ
+    // ---------------------------------------------------------------
+    // Тот же алгоритм, что в contains, но дополнительно считает:
+    //   visited     — сколько узлов посетили (длина пути от корня);
+    //   comparisons — сколько раз сравнили ключи (вызовы operator<).
+    //
+    // В каждом узле 1 или 2 сравнения:
+    //   value < data             -> 1 сравнение, идём влево;
+    //   иначе data < value       -> 2 сравнения, идём вправо;
+    //   иначе (равны)            -> 2 сравнения, нашли.
+    // Поэтому comparisons <= 2 * visited, а visited <= высоты дерева.
+    struct SearchStats {
+        bool found;
+        size_t visited;
+        size_t comparisons;
+    };
+
+    SearchStats searchWithStats(const T& value) const {
+        SearchStats stats{false, 0, 0};
+        Node* current = root_;
+        while (current) {
+            ++stats.visited;
+
+            ++stats.comparisons;
+            if (value < current->data) {
+                current = current->left;
+                continue;
+            }
+
+            ++stats.comparisons;
+            if (current->data < value) {
+                current = current->right;
+                continue;
+            }
+
+            stats.found = true;
+            break;
+        }
+        return stats;
+    }
+
+    // ---------------------------------------------------------------
     // ДОБАВЛЕНИЕ
     // ---------------------------------------------------------------
     // Спускаемся так же, как при поиске, запоминая родителя.
